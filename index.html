@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fabrieksjacht</title>
+<style>
+:root{--bg:#2b2024;--card:#fff;--ink:#1d2433;--muted:#5b6475;--line:#d9dee8;--e:#2a9d8f;--m:#7b2cbf;--r:#e76f51;--ok:#2bb24c;--warn:#f4a261;--bad:#d62828}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.45 -apple-system,system-ui,"Segoe UI",sans-serif;-webkit-text-size-adjust:100%}
+main{max-width:980px;margin:0 auto;padding:16px 16px 60px}
+h1{color:#fff;font-size:30px;margin:8px 0 4px}
+.sub{color:#cfd6e6;margin:0 0 16px}
+.card{background:var(--card);border-radius:18px;padding:20px;margin:0 0 16px;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+button{font:inherit;border:0;border-radius:14px;padding:14px 18px;cursor:pointer;font-weight:700;touch-action:manipulation}
+button:disabled{opacity:.4;cursor:not-allowed}
+.prim{background:var(--ink);color:#fff}
+.ghost{background:#eef1f6;color:var(--ink)}
+input,textarea{font:inherit;width:100%;border:2px solid var(--line);border-radius:12px;padding:12px;background:#fff;color:var(--ink)}
+textarea{min-height:120px;resize:vertical}
+label{display:block;font-weight:700;margin:12px 0 6px}
+.kies{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.kies button{color:#fff;padding:22px 12px;font-size:20px;display:flex;flex-direction:column;align-items:center;gap:6px;min-height:150px;justify-content:center}
+.kies small{font-weight:500;font-size:15px;opacity:.9}
+.b-e{background:var(--e)}.b-m{background:var(--m)}.b-r{background:var(--r)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.stat{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+.pill{background:#eef1f6;border-radius:999px;padding:6px 12px;font-size:15px;font-weight:700}
+.pill.ok{background:#dcf5e3;color:#13652b}.pill.no{background:#fde2e2;color:#8a1c1c}
+.fotobox{position:relative;background:#0b1222;border-radius:14px;overflow:hidden}
+canvas{display:block;width:100%;height:auto;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none}
+.slot{position:absolute;inset:0;background:rgba(10,15,30,.94);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-weight:700;font-size:22px;padding:20px}
+.melding{border-radius:12px;padding:12px 14px;margin:10px 0;font-weight:600}
+.doelen{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:8px}
+.melding.pest{background:#fff1e6;border:2px solid var(--warn)}
+.melding.fout{background:#fde2e2}
+.melding.goed{background:#dcf5e3}
+.fb{background:#fff7e0;border-left:6px solid var(--warn);border-radius:10px;padding:12px 14px;margin:12px 0}
+.tag{display:inline-block;color:#fff;border-radius:999px;padding:4px 12px;font-size:14px;font-weight:700}
+.vraag{font-size:22px;font-weight:700;margin:12px 0}
+.deel{border:2px solid var(--line);border-radius:14px;padding:14px;margin:14px 0}
+.deel.fout{border-color:var(--bad);background:#fff5f5}
+.deel h3{margin:0 0 8px;font-size:15px;color:var(--muted)}
+.deel .vq{font-weight:700;margin:0 0 10px}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:2px solid var(--line);border-radius:12px;margin:6px 0;cursor:pointer;font-weight:500}
+.opt input{width:22px;height:22px;margin:2px 0 0;flex:none}
+.opt:has(input:checked){border-color:var(--ink);background:#eef1f6}
+.combi{display:grid;grid-template-columns:1fr 1.6fr;gap:8px;align-items:center}
+.combi b{font-size:17px}
+select{font:inherit;font-size:16px;width:100%;border:2px solid var(--line);border-radius:10px;padding:10px;background:#fff;color:var(--ink)}
+.tip{background:#eef6ff;border-left:6px solid #3a86ff;border-radius:10px;padding:10px 14px;font-size:16px}
+.bonus{background:#1d2433;color:#fff;border-radius:16px;padding:14px 18px;font-size:24px;font-weight:800;margin:12px auto;max-width:620px}
+.stap{font-size:19px;font-weight:700;margin:6px 0}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row input{flex:1;min-width:160px}
+.klein{font-size:14px;color:var(--muted)}
+a.klein{color:var(--muted)}
+/* groen scherm */
+#groen{position:fixed;inset:0;background:var(--ok);color:#fff;overflow:auto;z-index:20;display:none}
+#groen .in{max-width:860px;margin:0 auto;padding:24px 16px 60px;text-align:center}
+#groen h2{font-size:44px;margin:10px 0}
+.feest{font-size:90px;display:inline-block;animation:dans 0.7s ease-in-out infinite alternate}
+@keyframes dans{from{transform:rotate(-12deg) scale(1)}to{transform:rotate(12deg) scale(1.15)}}
+.niveau{display:inline-block;background:#fff;color:var(--ink);border-radius:16px;padding:12px 22px;font-size:30px;font-weight:800;margin:10px 0}
+#groen .card{text-align:left;color:var(--ink)}
+.conf{position:fixed;top:-20px;width:12px;height:18px;z-index:21;pointer-events:none;animation:val linear forwards}
+@keyframes val{to{transform:translateY(110vh) rotate(720deg)}}
+@media (prefers-reduced-motion:reduce){.feest,.conf{animation:none}.conf{display:none}}
+#win{position:fixed;inset:0;background:linear-gradient(135deg,#ffb703,#fb8500);color:#fff;z-index:30;display:none;text-align:center;padding:40px 16px}
+#win h2{font-size:52px;margin:10px 0}
+@media (max-width:700px){.kies{grid-template-columns:1fr}.kies button{min-height:90px}.grid2{grid-template-columns:1fr}.combi{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main id="app"></main>
+
+<div id="groen" role="dialog" aria-live="assertive"><div class="in" id="groenIn"></div></div>
+<div id="win" role="dialog"><div id="winIn"></div></div>
+
+<script src="vragen.js"></script>
+<script src="fotos.js"></script>
+<script>
+var SPEL="https://fabrieksjacht-spel.nakijker-worker.workers.dev";
+var AI="https://escape-room-ai.nakijker-worker.workers.dev";
+var NIV={makkelijk:{t:"Makkelijke vraag",s:"⭐",kl:"var(--e)"},moeilijk:{t:"Open vraag",s:"⭐⭐",kl:"var(--m)"}};
+var PEST={weg2:"Pestkaart! Jullie zijn 2 fotostukjes kwijt.",moeilijk:"Pestkaart! Jullie volgende vraag MOET een open vraag zijn.",dubbel:"Pestkaart! Jullie moeten 2 vragen goed hebben voordat je naar de docent mag.",slot:"Pestkaart! Jullie foto zit 3 minuten op slot."};
+var KEY="fabrieksjacht", S=null;
+try{S=JSON.parse(localStorage.getItem(KEY));}catch(e){}
+function bewaar(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function $(id){return document.getElementById(id);}
+function esc(t){return String(t==null?"":t).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function post(url,o){return fetch(url,{method:"POST",body:JSON.stringify(o)}).then(function(r){return r.json();});}
+function voortgang(){return {stukjes:S.stappen,vragen:S.vragen,mk:S.mk||0,mo:S.mo||0};}
+function schud(n){var a=[];for(var i=0;i<n;i++)a.push(i);for(i=n-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),h=a[i];a[i]=a[j];a[j]=h;}return a;}
+var plekUitUrl=(new URLSearchParams(location.search)).get("code");
+if(plekUitUrl)history.replaceState(null,"",location.pathname);
+
+/* ---------- Start ---------- */
+function startScherm(){
+  $("app").innerHTML='<h1>🏭 Fabrieksjacht</h1><p class="sub">Geschiedenis 3 mavo · De industriële samenleving + Sociale zekerheid H1</p>'+
+  '<div class="card"><p>Jullie spelen met z\'n tweeën. Beantwoord vragen, haal codes bij de docent en ontdek stukje voor stukje een foto van een plek in de school. Daar hangt een QR-code. De eerste 3 groepen die hem scannen winnen!</p>'+
+  '<p><b>Regels:</b> ⭐ een makkelijke vraag is een set (3 meerkeuzevragen, of een combinatievraag + een meerkeuzevraag): alles moet goed zijn · ⭐⭐ open vragen kijkt de AI na en geeft hints · minstens 5 makkelijke en 4 open vragen goed, pas dan blijft de foto zichtbaar en mag je scannen · na elke 3 goede vragen krijg je een bonus-pestkaart 😈.</p>'+
+  '<label for="n1">Voornaam 1</label><input id="n1" autocomplete="off" maxlength="25">'+
+  '<label for="n2">Voornaam 2</label><input id="n2" autocomplete="off" maxlength="25">'+
+  '<p id="startFout"></p><button class="prim" id="startBtn">Start het spel</button></div>';
+  $("startBtn").onclick=function(){
+    var a=$("n1").value.trim(),b=$("n2").value.trim();
+    if(!a||!b){$("startFout").innerHTML='<span class="melding fout">Vul allebei je voornaam in.</span>';return;}
+    this.disabled=true;this.textContent="Even geduld…";
+    post(SPEL,{a:"start",namen:a+" & "+b}).then(function(r){
+      if(!r.ok)throw new Error(r.fout);
+      S={id:r.id,ronde:r.ronde,namen:a+" & "+b,foto:r.foto,stappen:0,vragen:0,mk:0,mo:0,gehad:{mc:[],comb:[],open:[]},huidig:null,wacht:null,forceMoeilijk:false,bonus:false,dubbel:0,slotTot:0,meld:""};
+      bewaar();thuis();
+    }).catch(function(e){$("startBtn").disabled=false;$("startBtn").textContent="Start het spel";$("startFout").innerHTML='<span class="melding fout">Geen verbinding met de server. Check de wifi en probeer opnieuw.</span>';});
+  };
+}
+
+/* ---------- Thuisscherm ---------- */
+function thuis(){
+  if(S.wacht)return groen();
+  if(S.huidig)return vraagScherm();
+  var n=FOTOS[S.foto].length;
+  var dis=function(t){return S.forceMoeilijk&&t!=="moeilijk"?" disabled":"";};
+  $("app").innerHTML='<h1>🏭 Fabrieksjacht</h1><p class="sub">'+esc(S.namen)+'</p>'+
+  (S.meld?'<div class="melding pest">'+esc(S.meld)+'</div>':'')+
+  '<div class="card"><h2 style="margin-top:0">Kies jullie volgende vraag</h2><div class="kies">'+
+  '<button class="b-e" data-t="makkelijk"'+dis("makkelijk")+'><span style="font-size:30px">⭐</span>Makkelijke vraag<small>meerkeuze-set · 1 fotostukje</small></button>'+
+  '<button class="b-m" data-t="moeilijk"'+dis("moeilijk")+'><span style="font-size:30px">⭐⭐</span>Open vraag<small>AI kijkt na · 2 fotostukjes</small></button></div>'+
+  '<p class="klein" style="margin-bottom:0">😈 Nog '+(3-S.vragen%3)+' goede vraag'+(3-S.vragen%3===1?'':'en')+' tot jullie volgende bonus-pestkaart.</p>'+
+  (S.dubbel?'<p class="melding pest">Pestkaart actief: nog '+(S.dubbel+1)+' vragen goed voordat het scherm groen wordt.</p>':'')+
+  '</div><div class="grid2"><div class="card"><h2 style="margin-top:0">Jullie foto</h2><div class="fotobox"><canvas id="cv" width="600" height="800" aria-label="Deels zichtbare foto"></canvas><div id="slotLaag"></div></div>'+
+  '<div class="stat"><span class="pill">'+Math.min(S.stappen,n)+' van '+n+' stukjes</span></div></div>'+
+  '<div class="card"><h2 style="margin-top:0">Voortgang</h2><div class="stat">'+
+  [["makkelijk","⭐ Makkelijk",S.mk],["moeilijk","⭐⭐ Open",S.mo]].map(function(x){return '<span class="pill '+(x[2]>=DOEL[x[0]]?"ok":"no")+'">'+x[1]+': '+x[2]+' / '+DOEL[x[0]]+'</span>';}).join("")+
+  '<span class="pill">Totaal goed: '+S.vragen+'</span></div><p class="klein">Haal beide doelen: dan blijft jullie foto zichtbaar en mogen jullie de QR-code scannen.</p>'+
+  '<label for="code">Code invoeren (pestkaart of QR-plek)</label><div class="row"><input id="code" autocomplete="off" autocapitalize="characters" maxlength="10" placeholder="bijv. P7KQ2X"><button class="prim" id="codeBtn">OK</button></div><div id="codeMsg"></div>'+
+  '<p class="klein">Gevonden plek? Scan de QR-code met de camera van deze iPad, of typ de code die eronder staat.</p></div></div>';
+  Array.prototype.forEach.call(document.querySelectorAll(".kies button"),function(b){b.onclick=function(){nieuweVraag(b.getAttribute("data-t"));};});
+  $("codeBtn").onclick=function(){stuurCode($("code").value,$("codeMsg"));};
+  tekenFoto();
+}
+
+/* ---------- Foto ---------- */
+var fotoImg={},slotTimer=null;
+function tekenFoto(){
+  var cv=$("cv");if(!cv)return;
+  var ctx=cv.getContext("2d"),st=FOTOS[S.foto].slice(0,S.stappen),k=cv.width/12;
+  ctx.fillStyle="#0b1222";ctx.fillRect(0,0,cv.width,cv.height);
+  ctx.fillStyle="#1c2742";
+  for(var x=0;x<12;x++)for(var y=0;y<16;y++)if((x+y)%2)ctx.fillRect(x*k,y*k,k,k);
+  var img=fotoImg[S.foto];
+  if(!img){img=fotoImg[S.foto]=new Image();img.onload=tekenFoto;img.src="f/"+S.foto+".jpg";return;}
+  if(!img.complete)return;
+  st.forEach(function(r){ctx.drawImage(img,r[0]*100,r[1]*100,r[2]*100,r[3]*100,r[0]*k,r[1]*k,r[2]*k,r[3]*k);});
+  clearInterval(slotTimer);
+  var sl=$("slotLaag"),vorige="";
+  function zet(h){if(h!==vorige){sl.innerHTML=h;vorige=h;var b=$("kijkBtn");if(b)b.onclick=kijk;}}
+  function mmss(ms){var s=Math.ceil(ms/1000);return Math.floor(s/60)+':'+("0"+s%60).slice(-2);}
+  function upd(){
+    if(!$("slotLaag"))return clearInterval(slotTimer);
+    var nu=Date.now();
+    if(S.slotTot>nu)return zet('<div class="slot">🔒 Foto op slot (pestkaart)<br>nog '+mmss(S.slotTot-nu)+'</div>');
+    if(fotoVrij()||(S.kijkEind||0)>nu)return zet("");
+    if((S.kijkWacht||0)>nu)return zet('<div class="slot">🙈 Foto verborgen<br><span style="font-size:17px;font-weight:500">Weer kijken over '+mmss(S.kijkWacht-nu)+'</span></div>');
+    zet('<div class="slot">🙈 Foto verborgen<button class="prim" id="kijkBtn" style="background:#ffd166;color:#1d2433;margin-top:14px">👁 Bekijk 3 seconden</button><span style="font-size:15px;font-weight:500;margin-top:12px">Pas na '+DOEL.makkelijk+' makkelijke en '+DOEL.moeilijk+' open vragen goed blijft de foto zichtbaar.</span></div>');
+  }
+  function kijk(){S.kijkEind=Date.now()+3000;S.kijkWacht=Date.now()+63000;bewaar();upd();}
+  upd();slotTimer=setInterval(upd,250);
+}
+var DOEL={makkelijk:5,moeilijk:4};
+function fotoVrij(){return S.mk>=DOEL.makkelijk&&S.mo>=DOEL.moeilijk;}
+
+/* ---------- Vragen ---------- */
+// Kies een vraag die deze groep nog niet had; is alles op, begin de lijst opnieuw.
+function kies(bank,soort,niet){
+  var vrij=[],j;
+  for(j=0;j<bank.length;j++)if(S.gehad[soort].indexOf(j)<0&&(niet||[]).indexOf(j)<0)vrij.push(j);
+  if(!vrij.length){S.gehad[soort]=[];for(j=0;j<bank.length;j++)if((niet||[]).indexOf(j)<0)vrij.push(j);}
+  var i=vrij[Math.floor(Math.random()*vrij.length)];S.gehad[soort].push(i);return i;
+}
+function nieuweVraag(t){
+  var q;
+  if(t==="moeilijk")q={i:kies(OPEN,"open")};
+  else{
+    var aantal=Math.random()<0.5?3:1,mc=[];
+    for(var k=0;k<aantal;k++){var i=kies(MC,"mc",mc);mc.push(i);}
+    q={mc:mc.map(function(i){return{i:i,ord:schud(4)};})};
+    if(aantal===1)q.comb={i:kies(COMB,"comb"),ord:schud(6)};
+  }
+  S.huidig={t:t,q:q,pog:0,fb:"",ant:"",keuze:{},fout:[],wachtTot:0};bewaar();vraagScherm();
+}
+function vraagTekst(h){
+  if(h.t==="moeilijk")return OPEN[h.q.i].q;
+  return h.q.comb?"Combinatievraag ("+COMB[h.q.comb.i].p+") + meerkeuzevraag":"3 meerkeuzevragen";
+}
+function setHtml(h){
+  var html="",n=0;
+  if(h.q.comb){
+    var c=COMB[h.q.comb.i];n++;
+    html+='<div class="deel'+(h.fout.indexOf("c")>=0?" fout":"")+'"><h3>Deel '+n+' · combinatievraag ('+esc(c.p)+')</h3><p class="vq">'+esc(c.t)+'</p><div class="combi">'+
+      c.l.map(function(p,r){var gek=h.keuze["c"+r];
+        return '<b>'+esc(p[0])+'</b><select data-k="c'+r+'" aria-label="'+esc(p[0])+'"><option value="">— kies —</option>'+
+          h.q.comb.ord.map(function(o){return '<option value="'+o+'"'+(String(gek)===String(o)?" selected":"")+'>'+esc(c.l[o][1])+'</option>';}).join("")+'</select>';}).join("")+'</div></div>';
+  }
+  h.q.mc.forEach(function(m,x){
+    var v=MC[m.i];n++;
+    html+='<div class="deel'+(h.fout.indexOf("m"+x)>=0?" fout":"")+'"><h3>Deel '+n+' · meerkeuze ('+esc(v.p)+')</h3><p class="vq">'+esc(v.q)+'</p>'+
+      m.ord.map(function(o){return '<label class="opt"><input type="radio" name="m'+x+'" data-k="m'+x+'" value="'+o+'"'+(String(h.keuze["m"+x])===String(o)?" checked":"")+'>'+esc(v.o[o])+'</label>';}).join("")+'</div>';
+  });
+  return html;
+}
+function vraagScherm(){
+  var h=S.huidig,n=NIV[h.t],open=h.t==="moeilijk",v=open?OPEN[h.q.i]:null;
+  $("app").innerHTML='<h1>🏭 Fabrieksjacht</h1><p class="sub">'+esc(S.namen)+'</p><div class="card">'+
+  '<span class="tag" style="background:'+n.kl+'">'+n.s+' '+n.t+'</span>'+
+  (open?'<p class="vraag">'+esc(v.q)+'</p><p class="tip">📖 Tip: '+esc(v.tip)+'</p><label for="ant">Jullie antwoord</label><textarea id="ant">'+esc(h.ant)+'</textarea>'
+       :'<p class="klein">Alles moet goed zijn. Bij een fout zie je alleen wélk deel nog niet klopt.</p>'+setHtml(h))+
+  '<div id="fb">'+(h.fb?'<div class="fb">'+esc(h.fb)+'</div>':'')+'</div>'+
+  '<div class="row" style="margin-top:12px"><button class="prim" id="checkBtn">'+(open?"Laat de AI nakijken":"Controleer")+'</button>'+
+  '<button class="ghost" id="wisselBtn">🔄 Andere vraag</button><button class="ghost" id="terugBtn">↩ Terug naar kiezen</button></div>'+
+  '<p style="margin-top:22px"><a href="#" class="klein" id="docBtn">Docent: handmatig goedkeuren</a></p></div>';
+  if(open)$("ant").oninput=function(){h.ant=$("ant").value;bewaar();};
+  else Array.prototype.forEach.call(document.querySelectorAll("[data-k]"),function(el){el.onchange=function(){if(el.type!=="radio"||el.checked){h.keuze[el.getAttribute("data-k")]=el.value;bewaar();}};});
+  $("checkBtn").onclick=open?nakijken:controleer;
+  $("wisselBtn").onclick=function(){nieuweVraag(h.t);};
+  $("terugBtn").onclick=function(){S.huidig=null;bewaar();thuis();};
+  $("docBtn").onclick=function(e){e.preventDefault();var p=prompt("Pincode docent:");if(!p)return;
+    post(SPEL,{a:"pin",pin:p}).then(function(r){if(r.ok)goed();else alert("Verkeerde pincode.");}).catch(function(){alert("Geen verbinding.");});};
+  wachtKnop();
+}
+function zetFb(t,soort){S.huidig.fb=t;bewaar();$("fb").innerHTML='<div class="'+(soort||"fb")+'">'+esc(t)+'</div>';}
+// Na een fout bij een makkelijke set even wachten, zodat gokken niet loont.
+function wachtKnop(){
+  var h=S.huidig,b=$("checkBtn");if(!h||!b||h.t!=="makkelijk")return;
+  var rest=Math.ceil(((h.wachtTot||0)-Date.now())/1000);
+  if(rest>0){b.disabled=true;b.textContent="Opnieuw controleren over "+rest+" s";setTimeout(wachtKnop,500);}
+  else{b.disabled=false;b.textContent="Controleer";}
+}
+function controleer(){
+  var h=S.huidig,fout=[],leeg=false;
+  if(h.q.comb){var c=COMB[h.q.comb.i];for(var r=0;r<c.l.length;r++){var k=h.keuze["c"+r];if(k===undefined||k==="")leeg=true;else if(Number(k)!==r&&fout.indexOf("c")<0)fout.push("c");}}
+  h.q.mc.forEach(function(m,x){var k=h.keuze["m"+x];if(k===undefined)leeg=true;else if(Number(k)!==0)fout.push("m"+x);});
+  if(leeg)return zetFb("Vul eerst alles in.");
+  if(!fout.length)return goed();
+  h.fout=fout;h.pog++;h.wachtTot=Date.now()+15000;bewaar();vraagScherm();
+  zetFb("❌ Nog niet alles goed. De rood omrande "+(fout.length===1?"vraag klopt":"vragen kloppen")+" nog niet. Lees de vraag nog eens goed.");
+}
+function nakijken(){
+  var h=S.huidig,btn=$("checkBtn");h.ant=$("ant").value.trim();
+  if(h.ant.length<2)return zetFb("Schrijf eerst een antwoord op.");
+  var v=OPEN[h.q.i];
+  btn.disabled=true;btn.textContent="AI kijkt na…";
+  post(AI,{vraag:v.q,antwoord:h.ant,voorbeeld:v.v,vak:"geschiedenis",niveau:"mavo, jaar 3",criteria:v.c.map(function(c,i){return{id:i,tekst:c};})})
+    .then(function(r){
+      if(!r.resultaten)throw new Error("geen uitslag");
+      var alles=v.c.every(function(c,i){return r.resultaten[i]===true;});
+      if(alles)return goed();
+      h.pog++;bewaar();vraagScherm();zetFb("❌ Nog niet helemaal goed. "+(r.feedback||""));
+    }).catch(function(){vraagScherm();zetFb("De AI is even niet bereikbaar. Wacht een paar seconden en probeer opnieuw. Lukt het niet? Roep de docent.");});
+}
+function goed(){
+  var h=S.huidig;S.vragen++;
+  if(h.t==="moeilijk"){S.mo=(S.mo||0)+1;S.forceMoeilijk=false;}else S.mk=(S.mk||0)+1;
+  if(S.vragen%3===0)S.bonus=true; // na elke 3 goede vragen een pestkaart erbij
+  S.meld="";
+  if(S.dubbel>0){S.dubbel--;S.huidig=null;S.meld="Goed! Maar door de pestkaart moet je nog 1 vraag goed hebben voordat je naar de docent mag.";bewaar();sync();return thuis();}
+  S.wacht={niveau:h.t,vraag:vraagTekst(h),antwoord:h.t==="moeilijk"?h.ant:"Alles goed ✅",t:Date.now(),bonus:S.bonus,stuk:false,pest:false};
+  S.bonus=false;S.huidig=null;bewaar();
+  sync();
+  groen(true);
+}
+
+/* ---------- Groen scherm ---------- */
+function confetti(){var k=["#ffd166","#ef476f","#118ab2","#fff","#06d6a0"];for(var i=0;i<70;i++){var d=document.createElement("div");d.className="conf";d.style.left=Math.random()*100+"vw";d.style.background=k[i%5];d.style.animationDuration=2+Math.random()*2.5+"s";d.style.animationDelay=Math.random()*0.8+"s";document.body.appendChild(d);setTimeout(function(x){x.remove();}.bind(null,d),5500);}}
+function groen(nieuw){
+  var w=S.wacht,n=NIV[w.niveau],tijd=new Date(w.t).toLocaleTimeString("nl-NL",{hour:"2-digit",minute:"2-digit"});
+  $("groen").style.display="block";$("app").innerHTML="";
+  $("groenIn").innerHTML='<div class="feest">🎉</div><h2>We hebben het gered!</h2>'+
+  '<p style="font-size:22px;font-weight:700">'+esc(S.namen)+'</p><div class="niveau">'+n.s+' '+n.t+'</div>'+
+  '<p style="font-size:20px">Goed beantwoord om '+tijd+' · Ga nu naar de docent!</p>'+
+  (w.bonus?'<div class="bonus">🎁 BONUS! Jullie krijgen een fotokaartje én een pestkaart 😈</div>':'')+
+  '<div class="card"><p class="klein">Vraag</p><p style="font-weight:700">'+esc(w.vraag)+'</p><p class="klein">Jullie antwoord</p><p style="white-space:pre-wrap">'+esc(w.antwoord)+'</p></div>'+
+  '<div class="card">'+(w.bonus?'<p class="stap">'+(w.stuk?'✅':'⬜')+' Fotokaartje ingevoerd</p><p class="stap">'+(w.pest?'✅':'⬜')+' Pestkaart ingevoerd en weggegeven</p>':'')+
+  '<label for="gcode">Code van de docent</label><div class="row"><input id="gcode" autocomplete="off" autocapitalize="characters" maxlength="10"><button class="prim" id="gBtn">OK</button></div><div id="gMsg"></div>'+
+  (w.bonus?'<p class="klein">Voer beide kaartjes hier in. Bij de pestkaart kies je daarna welke groep hem krijgt. Die groep ziet niet dat hij van jullie komt.</p>':'')+'</div>';
+  $("gBtn").onclick=function(){stuurCode($("gcode").value,$("gMsg"));};
+  if(nieuw)confetti();
+}
+// Groen scherm sluiten zodra alles binnen is (fotokaartje, en bij een bonus ook de pestkaart).
+function groenKlaar(){
+  var w=S.wacht;
+  if(w&&w.bonus&&!(w.stuk&&w.pest)){bewaar();return groen();}
+  S.wacht=null;bewaar();$("groen").style.display="none";thuis();
+}
+
+/* ---------- Codes ---------- */
+var foutTeller=0,foutTot=0;
+function stuurCode(code,msg){
+  code=String(code||"").trim();if(!code)return;
+  var soort=code.toUpperCase().charAt(0);
+  if(S.wacht&&S.wacht.stuk&&/[EM]/.test(soort)){msg.innerHTML='<div class="melding fout">Jullie fotokaartje is al ingevoerd. Nu nog de pestkaart.</div>';return;}
+  if(S.wacht&&soort==="P"&&(!S.wacht.bonus||S.wacht.pest)){msg.innerHTML='<div class="melding fout">Jullie krijgen nu geen pestkaart. Die is er na elke 3 goede vragen.</div>';return;}
+  if(Date.now()<foutTot){msg.innerHTML='<div class="melding fout">Te veel foute codes. Wacht '+Math.ceil((foutTot-Date.now())/1000)+' seconden.</div>';return;}
+  msg.innerHTML='<p class="klein">Code controleren…</p>';
+  post(SPEL,{a:"code",id:S.id,code:code,wacht:S.wacht?S.wacht.niveau:null,voortgang:voortgang()}).then(function(r){
+    if(r.oud){msg.innerHTML='<div class="melding fout">'+esc(r.fout)+'</div><button class="ghost" onclick="if(confirm(\'Opnieuw beginnen? Jullie voortgang is dan weg.\')){localStorage.removeItem(KEY);location.reload();}">Opnieuw beginnen</button>';return;}
+    if(!r.ok){foutTeller++;if(foutTeller>=3){foutTeller=0;foutTot=Date.now()+30000;}msg.innerHTML='<div class="melding fout">'+esc(r.fout)+'</div>';return;}
+    foutTeller=0;
+    if(r.type==="stuk"){S.stappen=Math.min(FOTOS[S.foto].length,S.stappen+r.aantal);S.meld="🧩 +"+r.aantal+" fotostukje"+(r.aantal>1?"s":"")+"!";if(S.wacht)S.wacht.stuk=true;return groenKlaar();}
+    else if(r.type==="pestkies")return kiesDoel(code,r,msg);
+    else if(r.type==="win"){S.plaats=r.plaats;bewaar();return winScherm();}
+    bewaar();$("groen").style.display="none";thuis();
+  }).catch(function(){msg.innerHTML='<div class="melding fout">Geen verbinding. Probeer het opnieuw.</div>';});
+}
+var PESTKORT={weg2:"2 fotostukjes kwijt",moeilijk:"volgende vraag moet een open vraag zijn",dubbel:"2 vragen goed voor het groene scherm",slot:"foto 3 minuten op slot"};
+function kiesDoel(code,r,msg){
+  if(!r.groepen.length){msg.innerHTML='<div class="melding fout">Er zijn nog geen andere groepen. Probeer het zo opnieuw (voer de code nog eens in).</div>';return;}
+  msg.innerHTML='<div class="melding pest">😈 Pestkaart: '+esc(PESTKORT[r.effect])+'. Welke groep krijgt hem?</div><div class="doelen">'+
+    r.groepen.map(function(g){return '<button class="ghost" data-id="'+esc(g.id)+'">'+esc(g.namen)+'</button>';}).join("")+'</div>';
+  Array.prototype.forEach.call(msg.querySelectorAll(".doelen button"),function(b){b.onclick=function(){
+    if(!confirm("Pestkaart sturen naar "+b.textContent+"?"))return;
+    msg.innerHTML='<p class="klein">Versturen…</p>';
+    post(SPEL,{a:"pest",id:S.id,code:code,doel:b.getAttribute("data-id")}).then(function(x){
+      if(!x.ok){msg.innerHTML='<div class="melding fout">'+esc(x.fout)+'</div>';return;}
+      S.meld="😈 Pestkaart verstuurd naar "+x.namen+". Zij weten niet dat hij van jullie komt!";
+      if(S.wacht)S.wacht.pest=true;
+      groenKlaar();
+    }).catch(function(){msg.innerHTML='<div class="melding fout">Geen verbinding. Voer de code opnieuw in.</div>';});
+  };});
+}
+function krijgPest(e){
+  if(e==="weg2")S.stappen=Math.max(0,S.stappen-2);
+  if(e==="moeilijk")S.forceMoeilijk=true;
+  if(e==="dubbel")S.dubbel=1;
+  if(e==="slot")S.slotTot=Date.now()+180000;
+  S.meld="😈 "+PEST[e];
+}
+// Elke 10 seconden: voortgang doorgeven en kijken of er een pestkaart binnen is
+function sync(){
+  if(!S||!S.id||S.plaats)return;
+  post(SPEL,{a:"voortgang",id:S.id,voortgang:voortgang()}).then(function(r){
+    if(!r.pest||!r.pest.length)return;
+    r.pest.forEach(krijgPest);bewaar();
+    if(!S.wacht&&!S.huidig)thuis();
+    alert(S.meld);
+  }).catch(function(){});
+}
+setInterval(sync,10000);
+function winScherm(){
+  $("win").style.display="block";var p=S.plaats;
+  $("winIn").innerHTML='<div class="feest">'+(p<=3?"🏆":"🎉")+'</div><h2>'+(p<=3?"GEWONNEN!":"Gevonden!")+'</h2><p style="font-size:30px;font-weight:800">Jullie zijn '+p+(p===1?"ste":"e")+'!</p><p style="font-size:22px">'+esc(S.namen)+'</p><p>Ga terug naar de docent en laat dit scherm zien.</p>';
+  confetti();
+}
+
+/* ---------- Opstarten ---------- */
+if(!S||!S.id)startScherm();
+else if(S.plaats)winScherm();
+else thuis();
+if(plekUitUrl){
+  if(!S||!S.id)alert("Open eerst het spel op de iPad waarop jullie spelen. Scan de QR-code daarna opnieuw met dezelfde iPad.");
+  else if(!S.plaats){stuurCode(plekUitUrl,document.getElementById("codeMsg")||document.getElementById("gMsg"));}
+}
+</script>
+</body>
+</html>
