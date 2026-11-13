@@ -78,6 +78,7 @@ a.klein{color:var(--muted)}
 <div id="win" role="dialog"><div id="winIn"></div></div>
 
 <script src="vragen.js"></script>
+<script src="vragen-extra.js"></script>
 <script src="fotos.js"></script>
 <script>
 var SPEL="https://fabrieksjacht-spel.nakijker-worker.workers.dev";
@@ -99,7 +100,7 @@ if(plekUitUrl)history.replaceState(null,"",location.pathname);
 function startScherm(){
   $("app").innerHTML='<h1>🏭 Fabrieksjacht</h1><p class="sub">Geschiedenis 3 mavo · De industriële samenleving + Sociale zekerheid H1</p>'+
   '<div class="card"><p>Jullie spelen met z\'n tweeën. Beantwoord vragen, haal codes bij de docent en ontdek stukje voor stukje een foto van een plek in de school. Daar hangt een QR-code. De eerste 3 groepen die hem scannen winnen!</p>'+
-  '<p><b>Regels:</b> ⭐ een makkelijke vraag is een set (3 meerkeuzevragen, of een combinatievraag + een meerkeuzevraag): alles moet goed zijn · ⭐⭐ open vragen kijkt de AI na en geeft hints · minstens 5 makkelijke en 4 open vragen goed, pas dan blijft de foto zichtbaar en mag je scannen · na elke 3 goede vragen krijg je een bonus-pestkaart 😈.</p>'+
+  '<p><b>Regels:</b> ⭐ een makkelijke vraag is een set (3 meerkeuzevragen, of een combinatievraag + een meerkeuzevraag): alles moet goed zijn · ⭐⭐ open vragen kijkt de AI na en geeft hints · minstens 8 makkelijke en 4 open vragen goed, pas dan blijft de foto zichtbaar en mag je scannen · na elke 3 goede vragen krijg je een bonus-pestkaart 😈.</p>'+
   '<label for="n1">Voornaam 1</label><input id="n1" autocomplete="off" maxlength="25">'+
   '<label for="n2">Voornaam 2</label><input id="n2" autocomplete="off" maxlength="25">'+
   '<p id="startFout"></p><button class="prim" id="startBtn">Start het spel</button></div>';
@@ -167,7 +168,7 @@ function tekenFoto(){
   function kijk(){S.kijkEind=Date.now()+3000;S.kijkWacht=Date.now()+63000;bewaar();upd();}
   upd();slotTimer=setInterval(upd,250);
 }
-var DOEL={makkelijk:5,moeilijk:4};
+var DOEL={makkelijk:8,moeilijk:4};
 function fotoVrij(){return S.mk>=DOEL.makkelijk&&S.mo>=DOEL.moeilijk;}
 
 /* ---------- Vragen ---------- */
