@@ -79,7 +79,7 @@ a.klein{color:var(--muted)}
 
 <script src="vragen.js"></script>
 <script src="vragen-extra.js"></script>
-<script src="fotos.js?v=8"></script>
+<script src="fotos.js?v=9"></script>
 <script>
 var SPEL="https://fabrieksjacht-spel.nakijker-worker.workers.dev";
 var AI="https://escape-room-ai.nakijker-worker.workers.dev";
@@ -87,13 +87,15 @@ var NIV={makkelijk:{t:"Makkelijke vraag",s:"⭐",kl:"var(--e)"},moeilijk:{t:"Ope
 var PEST={weg2:"Pestkaart! Jullie zijn 2 fotostukjes kwijt.",moeilijk:"Pestkaart! Jullie volgende vraag MOET een open vraag zijn.",dubbel:"Pestkaart! Jullie moeten 2 vragen goed hebben voordat je naar de docent mag.",slot:"Pestkaart! Jullie foto zit 3 minuten op slot."};
 var KEY="fabrieksjacht", S=null;
 try{S=JSON.parse(localStorage.getItem(KEY));}catch(e){}
-function bewaar(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function bewaar(){try{localStorage.setItem(KEY,JSON.stringify(S));localStorage.setItem("laatsteSpel",KEY);}catch(e){}}
 function $(id){return document.getElementById(id);}
 function esc(t){return String(t==null?"":t).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
 function post(url,o){return fetch(url,{method:"POST",body:JSON.stringify(o)}).then(function(r){return r.json();});}
 function voortgang(){return {stukjes:S.stappen,vragen:S.vragen,mk:S.mk||0,mo:S.mo||0};}
 function schud(n){var a=[];for(var i=0;i<n;i++)a.push(i);for(i=n-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),h=a[i];a[i]=a[j];a[j]=h;}return a;}
 var plekUitUrl=(new URLSearchParams(location.search)).get("code");
+// De QR-codes op de plekken worden ook door de Geldjacht gebruikt: speelt deze iPad die, stuur de code door.
+try{if(plekUitUrl&&localStorage.getItem("laatsteSpel")==="geldjacht-h2"){location.replace("../geldjacht-h2/?code="+encodeURIComponent(plekUitUrl));plekUitUrl=null;}}catch(e){}
 if(plekUitUrl)history.replaceState(null,"",location.pathname);
 
 /* ---------- Start ---------- */
