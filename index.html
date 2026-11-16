@@ -145,10 +145,12 @@ function thuis(){
 var fotoImg={},slotTimer=null;
 function tekenFoto(){
   var cv=$("cv");if(!cv)return;
-  var ctx=cv.getContext("2d"),st=FOTOS[S.foto].slice(0,S.stappen),k=cv.width/12;
+  var m=maat(S.foto),k=50;
+  if(cv.width!==m[0]*k){cv.width=m[0]*k;cv.height=m[1]*k;}
+  var ctx=cv.getContext("2d"),st=FOTOS[S.foto].slice(0,S.stappen);
   ctx.fillStyle="#0b1222";ctx.fillRect(0,0,cv.width,cv.height);
   ctx.fillStyle="#1c2742";
-  for(var x=0;x<12;x++)for(var y=0;y<16;y++)if((x+y)%2)ctx.fillRect(x*k,y*k,k,k);
+  for(var x=0;x<m[0];x++)for(var y=0;y<m[1];y++)if((x+y)%2)ctx.fillRect(x*k,y*k,k,k);
   var img=fotoImg[S.foto];
   if(!img){img=fotoImg[S.foto]=new Image();img.onload=tekenFoto;img.src="f/"+S.foto+".jpg";return;}
   if(!img.complete)return;
