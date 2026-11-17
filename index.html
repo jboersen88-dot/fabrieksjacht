@@ -95,7 +95,7 @@ function voortgang(){return {stukjes:S.stappen,vragen:S.vragen,mk:S.mk||0,mo:S.m
 function schud(n){var a=[];for(var i=0;i<n;i++)a.push(i);for(i=n-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),h=a[i];a[i]=a[j];a[j]=h;}return a;}
 var plekUitUrl=(new URLSearchParams(location.search)).get("code");
 // De QR-codes op de plekken worden ook door de Geldjacht gebruikt: speelt deze iPad die, stuur de code door.
-try{if(plekUitUrl&&localStorage.getItem("laatsteSpel")==="geldjacht-h2"){location.replace("../geldjacht-h2/?code="+encodeURIComponent(plekUitUrl));plekUitUrl=null;}}catch(e){}
+try{var ls=localStorage.getItem("laatsteSpel");if(plekUitUrl&&(ls==="geldjacht-h2"||ls==="geldjacht-3v")){location.replace("../"+ls+"/?code="+encodeURIComponent(plekUitUrl));plekUitUrl=null;}}catch(e){}
 if(plekUitUrl)history.replaceState(null,"",location.pathname);
 
 /* ---------- Start ---------- */
