@@ -129,7 +129,7 @@ function thuis(){
   '<div class="card"><h2 style="margin-top:0">Kies jullie volgende vraag</h2><div class="kies">'+
   '<button class="b-e" data-t="makkelijk"'+dis("makkelijk")+'><span style="font-size:30px">⭐</span>Makkelijke vraag<small>meerkeuze-set · 1 fotostukje</small></button>'+
   '<button class="b-m" data-t="moeilijk"'+dis("moeilijk")+'><span style="font-size:30px">⭐⭐</span>Open vraag<small>AI kijkt na · 2 fotostukjes</small></button></div>'+
-  '<p class="klein" style="margin-bottom:0">😈 Nog '+(3-S.vragen%3)+' goede vraag'+(3-S.vragen%3===1?'':'en')+' tot jullie volgende bonus-pestkaart.</p>'+
+  '<p class="klein" style="margin-bottom:0">😈 Nog '+(3-S.vragen%3)+' goede '+(3-S.vragen%3===1?'vraag':'vragen')+' tot jullie volgende bonus-pestkaart.</p>'+
   (S.dubbel?'<p class="melding pest">Pestkaart actief: nog '+(S.dubbel+1)+' vragen goed voordat het scherm groen wordt.</p>':'')+
   '</div><div class="grid2"><div class="card"><h2 style="margin-top:0">Jullie foto</h2><div class="fotobox"><canvas id="cv" width="600" height="800" aria-label="Deels zichtbare foto"></canvas><div id="slotLaag"></div></div>'+
   '<div class="stat"><span class="pill">'+Math.min(S.stappen,n)+' van '+n+' stukjes</span></div></div>'+
